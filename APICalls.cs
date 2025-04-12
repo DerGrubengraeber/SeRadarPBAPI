@@ -22,7 +22,7 @@ namespace GrubenRadarApi
     public partial class RadarApiMod
     {
         public MyGameTimer Timer;
-        static readonly Random Rand = new Random();
+        private static readonly MyRandom Random = new MyRandom();
         
         //Boring API init/uninit stuff
         void SetupApi()
@@ -68,14 +68,14 @@ namespace GrubenRadarApi
                 byte relation = entry.Item5;
 
                 MyDetectedEntityInfo target = CustomCreateHelper(
-                    (MyEntity)MyAPIGateway.Entities.GetEntityById(mainGridEntityId), grid.BigOwners.FirstOrDefault(), posError, velError);
+                    (MyEntity)MyAPIGateway.Entities.GetEntityById(mainGridEntityId), grid.BigOwners.FirstOrDefault(), posError, velError, name);
                 result.Add(target);
             }
             return result;
         }
 
-        //50% of this is copied from the API method, don't ask my why or how this works. Because it really should not.
-        MyDetectedEntityInfo CustomCreateHelper(MyEntity entity, long sensorOwner, float posError, float velError)
+        //50% of this is copied from the API method, the other 50% was revealed to me in a dream. Don't ask me why or how this works. Because it really should not.
+        MyDetectedEntityInfo CustomCreateHelper(MyEntity entity, long sensorOwner, float posError, float velError, string name)
         {
             if (entity == null)
                 return new MyDetectedEntityInfo();
@@ -95,14 +95,40 @@ namespace GrubenRadarApi
                 MyCubeGrid topMostParent = (MyCubeGrid)entity.GetTopMostParent();
                 MyDetectedEntityType type = topMostParent.GridSizeEnum != MyCubeSize.Small ? MyDetectedEntityType.LargeGrid : MyDetectedEntityType.SmallGrid;
                 MyRelationsBetweenPlayerAndBlock relationship = topMostParent.BigOwners.Count != 0 ? MyIDModule.GetRelationPlayerBlock(sensorOwner, topMostParent.BigOwners[0], MyOwnershipShareModeEnum.Faction) : MyRelationsBetweenPlayerAndBlock.NoOwnership;
-                string name = relationship == MyRelationsBetweenPlayerAndBlock.Owner || relationship == MyRelationsBetweenPlayerAndBlock.FactionShare || relationship == MyRelationsBetweenPlayerAndBlock.Friends ? topMostParent.DisplayName : (topMostParent.GridSizeEnum != MyCubeSize.Small ? MyTexts.GetString(MySpaceTexts.DetectedEntity_LargeGrid) : MyTexts.GetString(MySpaceTexts.DetectedEntity_SmallGrid));
+                //string name = relationship == MyRelationsBetweenPlayerAndBlock.Owner || relationship == MyRelationsBetweenPlayerAndBlock.FactionShare || relationship == MyRelationsBetweenPlayerAndBlock.Friends ? topMostParent.DisplayName : (topMostParent.GridSizeEnum != MyCubeSize.Small ? MyTexts.GetString(MySpaceTexts.DetectedEntity_LargeGrid) : MyTexts.GetString(MySpaceTexts.DetectedEntity_SmallGrid));
                 MatrixD orientation2 = topMostParent.WorldMatrix.GetOrientation();
-                Vector3 linearVelocity = topMostParent.Physics.LinearVelocity + new Vector3(Rand.NextDouble()* velError, Rand.NextDouble()* velError, Rand.NextDouble()* velError);
-                BoundingBoxD worldAabb2 = new BoundingBoxD(topMostParent.PositionComp.WorldAABB.Min + new Vector3(Rand.NextDouble()* posError, Rand.NextDouble()* posError, Rand.NextDouble()* posError), topMostParent.PositionComp.WorldAABB.Max  + new Vector3(Rand.NextDouble()* posError, Rand.NextDouble()* posError, Rand.NextDouble()* posError));
+                //Vector3 linearVelocity = topMostParent.Physics.LinearVelocity + new Vector3(Rand.NextDouble()* velError, Rand.NextDouble()* velError, Rand.NextDouble()* velError);
+                Vector3 posOffset = GetRandomOffset(posError);
+                BoundingBoxD worldAabb2 = new BoundingBoxD(
+                    topMostParent.PositionComp.WorldAABB.Min + posOffset,
+                    topMostParent.PositionComp.WorldAABB.Max + posOffset
+                );
+                Vector3 velOffset = GetRandomOffset(velError);
+                Vector3 linearVelocity = topMostParent.Physics != null
+                    ? topMostParent.Physics.LinearVelocity + velOffset
+                    : velOffset;
                     //topMostParent.PositionComp.WorldAABB;
                 return new MyDetectedEntityInfo(topMostParent.EntityId, name, type, null, orientation2, linearVelocity, relationship, worldAabb2, (long) timeInMilliseconds);
             }
             return new MyDetectedEntityInfo();
+        }
+        
+        Vector3 GetRandomOffset(float maxOffset)
+        {
+            if (maxOffset == 0.0f)
+                return Vector3.Zero;
+            
+            Vector3 offset = Vector3.One;
+            int attempt = 0;
+            while (offset.LengthSquared() > 1f && attempt < 100)
+            {
+                offset.X = Random.GetRandomFloat(-1f, 1f);
+                offset.Y = Random.GetRandomFloat(-1f, 1f);
+                offset.Z = Random.GetRandomFloat(-1f, 1f);
+                attempt++;
+            }
+            offset.Normalize();
+            return offset * Random.GetRandomFloat(0, 10 * maxOffset);
         }
         
 
