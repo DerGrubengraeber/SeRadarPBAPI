@@ -116,7 +116,7 @@ Targets.Clear();
 	foreach (MyDetectedEntityInfo info in Targets)
 {
 if (debug) Echo("Send Entity Data of '" + info.Name);
-					TargetsUse.Add(info);
+					if (info.Relationship == MyRelationsBetweenPlayerAndBlock.Enemies) TargetsUse.Add(info);
 }
 
 				foreach (MyDetectedEntityInfo info in TargetsUse)
