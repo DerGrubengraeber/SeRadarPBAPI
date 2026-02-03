@@ -3,15 +3,15 @@ using System.Collections.Generic;
 using VRage.Game.Components;
 using VRage.Utils;
 using IMyProgrammableBlock = Sandbox.ModAPI.Ingame.IMyProgrammableBlock;
+
 namespace GrubenRadarApi
 {
     [MySessionComponentDescriptor(MyUpdateOrder.NoUpdate)]
-    public partial class RadarApiMod: MySessionComponentBase
+    public partial class RadarApiMod : MySessionComponentBase
     {
-        Dictionary < string, Delegate > NerdRadarAPI = null;
+        Dictionary<string, Delegate> NerdRadarAPI = null;
         public PBInterface PBInterface;
-        public
-        const string TerminalPropertyId = "GrubenRadarAPI";
+        public const string TerminalPropertyId = "GrubenRadarAPI";
         public override void LoadData()
         {
             MyLog.Default.WriteLine("Loading RadarAPI...");
@@ -21,9 +21,9 @@ namespace GrubenRadarApi
                 SetupApi();
                 RegisterRadarApi();
             }
-            catch (Exception e)
+            catch(Exception e)
             {
-                MyLog.Default.WriteLineAndConsole($ "{e.Message}\n{e.StackTrace}");
+                MyLog.Default.WriteLineAndConsole($"{e.Message}\n{e.StackTrace}");
             }
         }
         protected override void UnloadData()
@@ -32,5 +32,6 @@ namespace GrubenRadarApi
             base.UnloadData();
             PBInterface?.Dispose();
         }
+   
     }
 }
