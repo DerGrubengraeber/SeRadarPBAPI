@@ -11,10 +11,10 @@ public void Main(string argument, UpdateType updateType)
         return;
     }
     var targets = RadarAPI.GetDetectedRadarTargets(this.Me);
-    Echo($ "Detected {targets.Count} targets:");
+    Echo($"Detected {targets.Count} targets:");
     foreach(var target in targets)
     {
-        Echo($ "- {target.Name} ({target.Type})");
+        Echo($"- {target.Name} ({target.Type})");
     }
 }
 public class GrubenRadarAPI
@@ -42,3 +42,4 @@ public class GrubenRadarAPI
         return _gtrt.Invoke(pb);
     }
 }
+
