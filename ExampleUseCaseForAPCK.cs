@@ -2454,7 +2454,7 @@
 						tt = new TrackedTarget(mdei, E.T, Vector3D.Zero, this.GetTypeName);
 						_pool.Targets.Add(mdei.EntityId, tt);
 					}
-					else
+					else if(tt.Source == "RadarTargeter")
 					{
 						tt.ThreatScore = 10;
 						tt.Actualize(mdei, E.T);
@@ -3476,4 +3476,3 @@
 			public static Action LockOnTickStart;
 		}
 	
-
