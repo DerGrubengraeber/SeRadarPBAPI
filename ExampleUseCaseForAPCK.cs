@@ -2427,12 +2427,10 @@
 			List<MyDetectedEntityInfo> _buffer = new List<MyDetectedEntityInfo>();
 			public void Update(int tick, TargetGatingComponent tgc)
 			{
-				E.DebugLog("B");
 				_buffer.Clear();
 				try
 				{
 					_buffer = _getDetectedRadarTargets(_me);
-					E.DebugLog("A");
 				}
 				catch (Exception e)
 				{
@@ -3478,3 +3476,4 @@
 			public static Action LockOnTickStart;
 		}
 	
+
