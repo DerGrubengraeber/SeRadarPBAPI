@@ -1,3 +1,6 @@
+# UPDATE
+This API is now part of the Framework mod and not required as a seperate mod anymore, however the TGP example script should still be relevant and i will keep updating it.
+
 # SeRadarPBAPI
 This mod adds an API method that can be used by Programmable Blocks to interact with [Nerd's Nebulous Radar Framework](https://steamcommunity.com/workshop/filedetails/?id=3290983434).
 
